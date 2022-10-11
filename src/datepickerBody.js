@@ -33,7 +33,7 @@ export default class DatepickerBody {
         this.type = type;
         this.opts = opts;
         this.cells = [];
-        this.$el = '';
+        this.$el = [];
         this.pressed = false;
         this.isVisible = true;
 
@@ -53,14 +53,25 @@ export default class DatepickerBody {
     _bindEvents() {
         let {range, dynamicRange} = this.opts;
 
-        addEventListener(this.$el, 'mouseover', this.onMouseOverCell);
-        addEventListener(this.$el, 'mouseout', this.onMouseOutCell);
-        addEventListener(this.$el, 'click', this.onClickBody);
-
+        this.$el.forEach( el => {
+            el.addEventListener('mouseover', this.onMouseOverCell);
+            el.addEventListener('mouseout', this.onMouseOutCell);
+            el.addEventListener('click', this.onClickBody);
+        });
+        
+        // addEventListener(this.$el, 'mouseover', this.onMouseOverCell);
+        // addEventListener(this.$el, 'mouseout', this.onMouseOutCell);
+        // addEventListener(this.$el, 'click', this.onClickBody);
 
         if (range && dynamicRange) {
-            addEventListener(this.$el, 'mousedown', this.onMouseDown);
-            addEventListener(this.$el, 'mousemove', this.onMouseMove);
+            
+            this.$el.forEach( el => {
+                el.addEventListener('mousedown', this.onMouseDown);
+                el.addEventListener('mousemove', this.onMouseMove);
+            });
+
+            // addEventListener(this.$el, 'mousedown', this.onMouseDown);
+            // addEventListener(this.$el, 'mousemove', this.onMouseMove);
             addEventListener(window.document, 'mouseup', this.onMouseUp);
         }
 
@@ -72,13 +83,18 @@ export default class DatepickerBody {
     }
 
     _buildBaseHtml() {
-        this.$el = createElement({
-            className: `air-datepicker-body -${this.type}-`,
-            innerHtml: templates[this.type]
-        });
+        for ( let i = 0; i < this.dp.showMonths; i++ ) {
+            this.$el.push(createElement({
+                className: `air-datepicker-body -${this.type}-`,
+                innerHtml: templates[this.type]
+            }));
 
-        this.$names = getEl('.air-datepicker-body--day-names', this.$el);
-        this.$cells = getEl('.air-datepicker-body--cells', this.$el);
+            this.$names = getEl('.air-datepicker-body--day-names', this.$el[i]);
+            this.$cells = getEl('.air-datepicker-body--cells', this.$el[i]);
+
+            console.log('body-names ' + i);
+            console.log(this.$names);
+        }        
     }
 
     _getDayNamesHtml(firstDay = this.dp.locale.firstDay) {
@@ -357,9 +373,9 @@ export default class DatepickerBody {
     render = () => {
         this.destroyCells();
 
-
         this._generateCells();
         this.cells.forEach((c) => {
+            console.log(c)
             this.$cells.appendChild(c.render());
         });
     }

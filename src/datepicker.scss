@@ -16,6 +16,9 @@
   font-size: var(--adp-font-size);
   color: var(--adp-color);
   width: var(--adp-width);
+  &.multi-month {
+    width: var(--adp-width-multi);
+  }
   position: absolute;
   transition:
           opacity var(--adp-transition-duration) var(--adp-transition-ease),

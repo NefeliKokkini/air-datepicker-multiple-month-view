@@ -75,13 +75,37 @@ export default class DatepickerNav {
 
     _getTitle() {
         let {dp, opts} = this;
+
+        console.log('opts.showMonths');
+        console.log(opts.showMonths);
+
         let template = opts.navTitles[dp.currentView];
+
+        console.log('template');
+        console.log(template); // MMMM, <i>yyyy</i>
+
+        console.log('dp.currentView');
+        console.log(dp.currentView); // days
 
         if (typeof template === 'function') {
             return template(dp);
         }
 
-        return dp.formatDate(dp.viewDate, template);
+        console.log('dp.viewDate');
+        console.log(dp.viewDate); //Tue Oct 11 2022 15:44:48 GMT+0300 (Eastern European Summer Time)
+
+        console.log('_getTitle return');
+        console.log(dp.formatDate(dp.viewDate, template)); //October, <i>2022</i>
+
+        let spanMonths = dp.formatDate(dp.viewDate, template);
+
+        if ( opts.showMonths > 1 ) { // if showMonths option is enabled and > 1, we add that many months to navigation title
+
+            spanMonths = dp.formatDate(dp.viewDate, template) + '-' + dp.addMonths(dp.viewDate, opts.showMonths - 1, template);
+
+        }
+
+        return spanMonths;
     }
 
     handleNavStatus() {

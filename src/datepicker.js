@@ -80,6 +80,7 @@ export default class Datepicker {
         this.customHide = false;
         this.currentView = view;
         this.selectedDates = [];
+        this.showMonths = 2; // default months
         this.views = {};
         this.keys = [];
         this.rangeDateFrom = '';
@@ -93,6 +94,8 @@ export default class Datepicker {
     viewIndexes = [consts.days, consts.months, consts.years];
 
     init() {
+        console.log('Show months after init');
+        console.log(this.showMonths);
         let {
             opts,
             treatAsInline,
@@ -190,11 +193,17 @@ export default class Datepicker {
             this._addMobileAttributes();
         }
 
+        console.log('this.currentView');
+        console.log(this.currentView);
+
         this.views[this.currentView] = new DatepickerBody({
             dp,
             type: this.currentView,
             opts
         });
+
+        console.log('dp');
+        console.log(dp);
 
         this.nav = new DatepickerNav({dp, opts});
 
@@ -206,7 +215,14 @@ export default class Datepicker {
             this._addButtons();
         }
 
-        this.$content.appendChild(this.views[this.currentView].$el);
+        console.log('el element');
+        console.log(this.views[this.currentView].$el);
+
+        for ( let i = 0; i < this.views[this.currentView].$el.length; i++ ) {
+            this.$content.appendChild(this.views[this.currentView].$el[i]);
+        }
+
+        // this.$content.appendChild(this.views[this.currentView].$el);
         this.$nav.appendChild(this.nav.$el);
     }
 
@@ -283,6 +299,9 @@ export default class Datepicker {
         this.$content = getEl('.air-datepicker--content',  this.$datepicker);
         this.$pointer = getEl('.air-datepicker--pointer', this.$datepicker);
         this.$nav = getEl('.air-datepicker--navigation', this.$datepicker);
+
+        console.log('this.nav');
+        console.log(this.$nav);
     }
 
     _handleLocale() {
@@ -327,6 +346,13 @@ export default class Datepicker {
             classes = `air-datepicker -${main}-${sec}- -from-${main}-`;
 
         this.$datepicker.classList.add(...classes.split(' '));
+
+        if ( this.opts.showMonths > 1 ) {
+            console.log('check if showMonths is visible here..');
+            console.log(this.opts.showMonths);
+
+            this.$datepicker.classList.add('multi-month');
+        }
     }
 
     _bindEvents() {
@@ -409,6 +435,12 @@ export default class Datepicker {
         }
 
         return result;
+    }
+
+    addMonths(date = this.viewDate, numOfMonths, template, endDate = new Date()) {
+        endDate.setMonth(date.getMonth() + numOfMonths);
+
+        return this.formatDate(endDate, template);
     }
 
     /**
@@ -1002,6 +1034,8 @@ export default class Datepicker {
         this.trigger(consts.eventChangeCurrentView, view);
 
         if (!this.views[view]) {
+
+            console.log('inside setCurrentView');
             let newView = this.views[view] = new DatepickerBody({
                 dp: this,
                 opts: this.opts,

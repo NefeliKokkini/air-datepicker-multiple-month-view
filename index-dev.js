@@ -17,9 +17,10 @@ let selected = false;
 let opts = {
     // minDate: Date.now(),
     inline: false,
-    visible: false,
+    visible: true,
     locale: en,
-    timepicker: true,
+    timepicker: false,
+    showMonths: 2,
     // container: '.input-wrap',
     // timepicker: true,
     // maxDate: mDate,
@@ -27,7 +28,7 @@ let opts = {
     isMobile: false,
     // timepicker: true,
     autoClose: false,
-    range: false,
+    range: true,
     toggleSelected: false,
     // position: customPosition,
     // position: 'right center',
@@ -70,7 +71,9 @@ let opts = {
     // visible: true
 }
 
-
+function showMonths({months}) {
+    console.log(months);
+}
 
 function manualPosition({$datepicker, $target, $pointer, done}) {
     let coords = $target.getBoundingClientRect(),
@@ -139,6 +142,8 @@ function customPosition({$datepicker, $target, $pointer, isViewChange, done}){
     }
 }
 
+console.log('Opts');
+console.log(opts);
 window.dp1 = new Datepicker($input1, opts);
 
 $bntDestroy.addEventListener('click', dp1.destroy)
