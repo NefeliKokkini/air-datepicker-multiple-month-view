@@ -5,7 +5,8 @@
  */
 import consts from './consts';
 
-export function getEl(el, context = document) {
+export function getEl(el, context = document, i = 0) {
+
     return typeof el === 'string'
         ? context['querySelector'](el)
         : el;

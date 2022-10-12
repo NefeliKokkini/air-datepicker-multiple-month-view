@@ -18,6 +18,11 @@
   width: var(--adp-width);
   &.multi-month {
     width: var(--adp-width-multi);
+    .air-datepicker--content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 1.5rem;
+    }
   }
   position: absolute;
   transition:

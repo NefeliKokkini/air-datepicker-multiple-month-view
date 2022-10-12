@@ -142,12 +142,9 @@ function customPosition({$datepicker, $target, $pointer, isViewChange, done}){
     }
 }
 
-console.log('Opts');
-console.log(opts);
 window.dp1 = new Datepicker($input1, opts);
 
 $bntDestroy.addEventListener('click', dp1.destroy)
-
 
 let dates = [new Date(), new Date('2021-06-10'), new Date('2021-06-15')];
 let toggle = true;
@@ -174,5 +171,3 @@ $btnAction.addEventListener('click', () => {
 if (module.hot) {
     module.hot.accept();
 }
-
-

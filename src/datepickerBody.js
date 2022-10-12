@@ -32,8 +32,10 @@ export default class DatepickerBody {
         this.dp = dp;
         this.type = type;
         this.opts = opts;
-        this.cells = [];
+        this.cells = [[],[]]; // two dimensional array
         this.$el = [];
+        this.$names = []; // array to support multi-months view
+        this.$cells = []; // array to support multi-months view
         this.pressed = false;
         this.isVisible = true;
 
@@ -89,11 +91,9 @@ export default class DatepickerBody {
                 innerHtml: templates[this.type]
             }));
 
-            this.$names = getEl('.air-datepicker-body--day-names', this.$el[i]);
-            this.$cells = getEl('.air-datepicker-body--cells', this.$el[i]);
+            this.$names[i] = getEl('.air-datepicker-body--day-names', this.$el[i], i);
+            this.$cells[i] = getEl('.air-datepicker-body--cells', this.$el[i]);
 
-            console.log('body-names ' + i);
-            console.log(this.$names);
         }        
     }
 
@@ -121,7 +121,7 @@ export default class DatepickerBody {
         return html;
     }
 
-    _getDaysCells() {
+    _getDaysCells(j) {
         let {viewDate, locale: {firstDay}} = this.dp,
             totalMonthDays = getDaysCount(viewDate),
             {year, month} = getParsedDate(viewDate),
@@ -141,12 +141,12 @@ export default class DatepickerBody {
 
         while (i < totalRenderDays) {
             let date = new Date(renderYear, renderMonth, firstRenderDayDate + i);
-            this._generateCell(date);
+            this._generateCell(date, j);
             i++;
         }
     }
 
-    _generateCell(date) {
+    _generateCell(date, j) {
         let {type, dp, opts} = this;
         let cell = new DatepickerCell({
             type,
@@ -156,13 +156,13 @@ export default class DatepickerBody {
             body: this
         });
 
-        this.cells.push(cell);
+        this.cells[j].push(cell);
 
         return cell;
     }
 
-    _generateDayCells() {
-        this._getDaysCells();
+    _generateDayCells(i) {
+        this._getDaysCells(i);
     }
 
     _generateMonthCells() {
@@ -189,13 +189,16 @@ export default class DatepickerBody {
     }
 
     renderDayNames() {
-        this.$names.innerHTML =  this._getDayNamesHtml();
+        for ( let i = 0; i < this.dp.showMonths; i++ ) {
+            this.$names[i].innerHTML =  this._getDayNamesHtml();
+        }  
+
     }
 
-    _generateCells() {
+    _generateCells(i) {
         switch (this.type) {
             case consts.days:
-                this._generateDayCells();
+                this._generateDayCells(i);
                 break;
             case consts.months:
                 this._generateMonthCells();
@@ -217,9 +220,12 @@ export default class DatepickerBody {
     }
 
     destroyCells() {
-        this.cells.forEach(c => c.destroy());
-        this.cells = [];
-        this.$cells.innerHTML = '';
+
+        for ( let i = 0; i < this.dp.showMonths; i++ ) {
+            this.cells[i].forEach(c => c.destroy());
+            this.$cells[i].innerHTML = '';
+        }  
+
     }
 
     destroy() {
@@ -372,11 +378,17 @@ export default class DatepickerBody {
 
     render = () => {
         this.destroyCells();
+        
+        for ( let i = 0; i < this.dp.showMonths; i++ ) {
+            this._generateCells(i);
+        }  
 
-        this._generateCells();
-        this.cells.forEach((c) => {
-            console.log(c)
-            this.$cells.appendChild(c.render());
-        });
+        for ( let i = 0; i < this.dp.showMonths; i++ ) {
+
+            this.cells[i].forEach((c) => {
+                this.$cells[i].appendChild(c.render());
+            });
+        } 
+       
     }
 }
